@@ -14,6 +14,7 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Home/Index');
-});
+Route::get(
+    '/',
+    fn () => Inertia::render('Reservations/Index')
+);
