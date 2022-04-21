@@ -21,4 +21,14 @@ class Room extends Model
         'capacity',
         'dailyPrice',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'capacity' => 'int',
+        'dailyPrice' => 'double',
+    ];
 }
