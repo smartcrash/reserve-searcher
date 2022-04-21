@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\BookingController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +14,4 @@ use Inertia\Inertia;
 |
 */
 
-Route::get(
-    '/',
-    fn () => Inertia::render('Reservations/Index')
-);
+Route::get('/', [BookingController::class, 'index']);
