@@ -53,10 +53,14 @@ class IndexTest extends DuskTestCase
         });
     }
 
-    // public function test_can_navigate_to_create_booking()
-    // {
-    //     $this->browse(function (Browser $browser) {
-    //         $browser->visit('/');
-    //     });
-    // }
+    public function test_can_navigate_to_create_booking()
+    {
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/')
+                ->assertSeeLink('New Booking')
+                ->clickLink('New Booking')
+                ->pause(500)
+                ->assertPathIs('/search');
+        });
+    }
 }

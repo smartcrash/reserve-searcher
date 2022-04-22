@@ -1,4 +1,5 @@
-import { Container, List, ListItem } from "@chakra-ui/react";
+import { Button, Container, List, ListItem } from "@chakra-ui/react";
+import { Link } from "@inertiajs/inertia-react";
 import React from "react";
 import { BookingCard } from "../../Shared/BookingCard";
 import { Booking } from "../../types";
@@ -10,6 +11,10 @@ interface Props {
 const Index = ({ bookings }: Props) => {
     return (
         <Container>
+            <Button as={Link} href="/search">
+                New Booking
+            </Button>
+
             <List spacing={6}>
                 {bookings.map((item) => {
                     return (
