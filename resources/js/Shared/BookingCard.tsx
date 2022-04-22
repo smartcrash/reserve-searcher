@@ -1,14 +1,11 @@
 import {
     Box,
-    Button,
-    Collapse,
     Flex,
     Grid,
     GridItem,
     Heading,
     Link,
     Text,
-    useDisclosure,
 } from "@chakra-ui/react";
 import { differenceInDays } from "date-fns";
 import { capitalize, padStart } from "lodash";
@@ -22,17 +19,17 @@ interface Props {
     booking: Booking;
 }
 
-const ROOM_TYPES: Record<number, string> = {
-    1: "single",
-    2: "double",
-    3: "triple",
-    4: "quadruple",
-};
+const getRoomType = (capacity: number) =>
+    ({
+        1: "single",
+        2: "double",
+        3: "triple",
+        4: "quadruple",
+    }[capacity]);
 
 export const BookingCard = ({ booking }: Props) => {
-    const { isOpen, onToggle } = useDisclosure();
-
     const {
+        id,
         identifier,
         room,
         createdAt,
@@ -49,7 +46,7 @@ export const BookingCard = ({ booking }: Props) => {
         Nights: differenceInDays(new Date(endDate), new Date(startDate)),
         Price: toCurrency(totalPrice),
         Persons: guestCount,
-        "Room Type": capitalize(ROOM_TYPES[room.capacity]),
+        "Room Type": capitalize(getRoomType(room.capacity)),
     };
 
     return (
@@ -58,6 +55,7 @@ export const BookingCard = ({ booking }: Props) => {
             border={"1px"}
             borderColor={"gray.200"}
             rounded={"lg"}
+            data-testid={`booking-${id}`}
         >
             <Box px={{ sm: 6, md: 4 }} py={5}>
                 <CopyToClipboard value={identifier}>
@@ -120,61 +118,49 @@ export const BookingCard = ({ booking }: Props) => {
                 ))}
 
                 <Box
-                    py={3}
+                    py={4}
+                    mt={4}
                     px={{ sm: 6, md: 4 }}
                     borderTop={"1px"}
                     borderColor={"gray.200"}
                 >
-                    <Button
-                        onClick={onToggle}
-                        variant={"outline"}
-                        size={"sm"}
-                        colorScheme={"blue"}
-                    >
-                        See {isOpen ? "less" : "more"}
-                    </Button>
+                    <Heading fontSize={"md"} mb={3}>
+                        Contact
+                    </Heading>
 
-                    <Collapse in={isOpen}>
-                        <Box pt={5}>
-                            <Heading fontSize={"md"} mb={3}>
-                                Contact
-                            </Heading>
+                    <Text fontSize={"sm"} color={"gray.500"}>
+                        Name
+                    </Text>
+                    <Text>{guest.fullName}</Text>
 
+                    <Flex justifyContent={"space-between"} mt={2}>
+                        <Box>
                             <Text fontSize={"sm"} color={"gray.500"}>
-                                Name
+                                Phone
                             </Text>
-                            <Text>{guest.fullName}</Text>
-
-                            <Flex justifyContent={"space-between"} mt={2}>
-                                <Box>
-                                    <Text fontSize={"sm"} color={"gray.500"}>
-                                        Phone
-                                    </Text>
-                                    <a href=""></a>
-                                    <Link
-                                        href={`tel:${guest.phoneNumber}`}
-                                        color={"gray.900"}
-                                        textDecor={"underline"}
-                                    >
-                                        {guest.phoneNumber}
-                                    </Link>
-                                </Box>
-
-                                <Box>
-                                    <Text fontSize={"sm"} color={"gray.500"}>
-                                        Email
-                                    </Text>
-                                    <Link
-                                        href={`mailto:${guest.email}`}
-                                        color={"gray.900"}
-                                        textDecor={"underline"}
-                                    >
-                                        {guest.email}
-                                    </Link>
-                                </Box>
-                            </Flex>
+                            <a href=""></a>
+                            <Link
+                                href={`tel:${guest.phoneNumber}`}
+                                color={"gray.900"}
+                                textDecor={"underline"}
+                            >
+                                {guest.phoneNumber}
+                            </Link>
                         </Box>
-                    </Collapse>
+
+                        <Box>
+                            <Text fontSize={"sm"} color={"gray.500"}>
+                                Email
+                            </Text>
+                            <Link
+                                href={`mailto:${guest.email}`}
+                                color={"gray.900"}
+                                textDecor={"underline"}
+                            >
+                                {guest.email}
+                            </Link>
+                        </Box>
+                    </Flex>
                 </Box>
             </Box>
         </Box>
