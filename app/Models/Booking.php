@@ -23,10 +23,10 @@ class Booking extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'startDate',
-        'endDate',
+        'checkIn',
+        'checkOut',
         'totalPrice',
-        'guestCount',
+        'persons',
     ];
 
     /**
@@ -36,11 +36,11 @@ class Booking extends Model
      */
     protected $casts = [
         'totalPrice' => 'double',
-        'guestCount' => 'int',
+        'persons' => 'int',
         'guestId' => 'int',
         'roomId' => 'int',
-        'startDate' => 'datetime',
-        'endDate' => 'datetime',
+        'checkIn' => 'datetime',
+        'checkOut' => 'datetime',
         'createdAt' => 'datetime',
     ];
 

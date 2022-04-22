@@ -33,19 +33,19 @@ export const BookingCard = ({ booking }: Props) => {
         identifier,
         room,
         createdAt,
-        startDate,
-        guestCount,
-        endDate,
+        checkIn,
+        persons,
+        checkOut,
         guest,
         totalPrice,
     } = booking;
 
     const attributes = {
-        "Check-in": formatDate(startDate),
-        "Check-out": formatDate(endDate),
-        Nights: differenceInDays(new Date(endDate), new Date(startDate)),
+        "Check-in": formatDate(checkIn),
+        "Check-out": formatDate(checkOut),
+        Nights: differenceInDays(new Date(checkOut), new Date(checkIn)),
         Price: toCurrency(totalPrice),
-        Persons: guestCount,
+        Persons: persons,
         "Room Type": capitalize(getRoomType(room.capacity)),
     };
 

@@ -20,10 +20,10 @@ class BookingFactory extends Factory
 
         return [
             'identifier' => Str::random(10),
-            'startDate' => now(),
-            'endDate' => now()->addDay(1),
+            'checkIn' => now(),
+            'checkOut' => now()->addDay(1),
             'totalPrice' => $room->dailyPrice,
-            'guestCount' => 1,
+            'persons' => 1,
             'roomId' => rand(1, $room->capacity),
             'guestId' => $guest->id,
             'createdAt' => now(),

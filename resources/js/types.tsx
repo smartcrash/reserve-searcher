@@ -15,10 +15,10 @@ export interface Room {
 export interface Booking {
     id: number;
     identifier: string;
-    startDate: string;
-    endDate: string;
+    checkIn: string;
+    checkOut: string;
     totalPrice: number;
-    guestCount: number;
+    persons: number;
     roomId: number;
     room: Room;
     guestId: number;
