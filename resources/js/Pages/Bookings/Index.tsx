@@ -1,7 +1,8 @@
-import { Button, Container, List, ListItem } from "@chakra-ui/react";
+import { Button, List, ListItem } from "@chakra-ui/react";
 import { Link } from "@inertiajs/inertia-react";
 import React from "react";
 import { BookingCard } from "../../Shared/BookingCard";
+import { Layout } from "../../Shared/Layout";
 import { Booking } from "../../types";
 
 interface Props {
@@ -10,8 +11,8 @@ interface Props {
 
 const Index = ({ bookings }: Props) => {
     return (
-        <Container>
-            <Button as={Link} href="/search">
+        <Layout>
+            <Button as={Link} href="/search" colorScheme={"purple"}>
                 New Booking
             </Button>
 
@@ -24,7 +25,7 @@ const Index = ({ bookings }: Props) => {
                     );
                 })}
             </List>
-        </Container>
+        </Layout>
     );
 };
 

@@ -1,7 +1,8 @@
 import React from "react";
+import { Layout } from "../../Shared/Layout";
 
 const Search = () => {
-    return <></>;
+    return <Layout></Layout>;
 };
 
 export default Search;
