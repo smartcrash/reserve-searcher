@@ -81,7 +81,7 @@ export const BookingCard = ({ booking }: Props) => {
 
             <Box borderTop={"1px"} borderColor={"gray.200"}>
                 {Object.entries(attributes).map(([key, value]) => (
-                    <dl>
+                    <dl key={`${key}-${value}`}>
                         <Grid
                             bg={"gray.50"}
                             px={{ sm: 6, md: 4 }}
