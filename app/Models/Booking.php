@@ -25,7 +25,6 @@ class Booking extends Model
     protected $fillable = [
         'checkIn',
         'checkOut',
-        'totalPrice',
         'persons',
     ];
 

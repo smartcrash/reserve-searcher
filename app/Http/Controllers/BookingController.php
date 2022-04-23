@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Guest;
 use App\Models\Room;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
 
 class BookingController extends Controller
 {
@@ -81,10 +83,16 @@ class BookingController extends Controller
             return redirect('/search');
         }
 
+        $validated = $validator->validated();
+
+        $checkIn = Carbon::create($validated['check-in']);
+        $checkOut = Carbon::create($validated['check-out']);
+        $room = Room::findOrFail($validated['roomId']);
+        $persons = (int) $validated['persons'];
 
         return Inertia::render(
             'Bookings/Create',
-            []
+            compact('checkIn', 'checkOut', 'room', 'persons')
         );
     }
 
@@ -96,6 +104,31 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'checkIn' => 'required|date',
+            'checkOut' => 'required|date',
+            'fullName' => 'required|min:4',
+            'email' => 'required|email',
+            'phoneNumber' => 'required',
+            'roomId' => 'required|exists:rooms,id',
+            'persons' => 'required|integer|min:1|max:4'
+        ]);
+
+        $booking = Booking::make($validated);
+        $room = Room::findOrFail($validated['roomId']);
+        $guest = Guest::create($validated);
+
+        $checkIn = Carbon::create($validated['checkIn']);
+        $checkOut = Carbon::create($validated['checkOut']);
+
+        $booking->identifier = Str::random(10);
+        $booking->totalPrice = $room->dailyPrice * $checkIn->diff($checkOut)->days;
+        $booking->guest()->associate($guest);
+        $booking->room()->associate($room);
+        $booking->createdAt = now();
+
+        $booking->save();
+
+        return redirect('/');
     }
 }
