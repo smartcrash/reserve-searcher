@@ -20,7 +20,8 @@ export const RoomsDataTable = ({
 }: Props) => {
     const data = useMemo(
         () =>
-            rooms.map(({ number, capacity, dailyPrice }) => ({
+            rooms.map(({ id, number, capacity, dailyPrice }) => ({
+                id,
                 number: padStart(number, 2, "0"),
                 roomType: capitalize(getRoomType(capacity)),
                 dailyPrice: `${toCurrency(dailyPrice)}/night`,
@@ -93,6 +94,7 @@ export const RoomsDataTable = ({
                         <Tr
                             {...row.getRowProps()}
                             style={{ cursor: "pointer" }}
+                            data-testid={`room-${row.original.id}`}
                             onClick={() => onClick(rooms[row.index])}
                         >
                             {row.cells.map((cell) => (

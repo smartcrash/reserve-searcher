@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
 import { addDays, differenceInDays, isValid } from "date-fns";
-import React from "react";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
 import { formatDate } from "../../Helper/formatDate";
@@ -62,7 +62,11 @@ const Search = ({ rooms }: Props) => {
         formState: { errors, isSubmitting },
     } = useForm<FormData>({ defaultValues });
 
-    const [checkIn, checkOut] = watch(["checkIn", "checkOut"]);
+    const [checkIn, checkOut, persons] = watch([
+        "checkIn",
+        "checkOut",
+        "persons",
+    ]);
 
     const nights =
         parseDate(checkIn) && parseDate(checkOut)
@@ -95,6 +99,22 @@ const Search = ({ rooms }: Props) => {
             },
         });
     });
+
+    const onClick = useCallback(
+        (room: Room) => {
+            if (parseDate(checkIn) && parseDate(checkOut)) {
+                Inertia.visit("/new", {
+                    data: {
+                        "check-in": toCalendar(parseDate(checkIn)!),
+                        "check-out": toCalendar(parseDate(checkOut)!),
+                        roomId: room.id,
+                        persons,
+                    },
+                });
+            }
+        },
+        [checkIn, checkOut, persons]
+    );
 
     return (
         <Layout>
@@ -167,7 +187,7 @@ const Search = ({ rooms }: Props) => {
                 </Button>
             </form>
 
-            <RoomsDataTable rooms={rooms} nights={nights} />
+            <RoomsDataTable rooms={rooms} nights={nights} onClick={onClick} />
         </Layout>
     );
 };

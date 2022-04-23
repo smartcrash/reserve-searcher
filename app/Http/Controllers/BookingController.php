@@ -35,7 +35,7 @@ class BookingController extends Controller
         $validator = Validator::make($request->query(), [
             'check-in' => 'required|date',
             'check-out' => 'required|date',
-            'persons' => 'required|integer'
+            'persons' => 'required|integer|min:1|max:4'
         ]);
 
 
@@ -63,11 +63,25 @@ class BookingController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     *
+
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+        $validator = Validator::make($request->query(), [
+            'check-in' => 'required|date',
+            'check-out' => 'required|date',
+            'roomId' => 'required|exists:rooms,id',
+            'persons' => 'required|integer|min:1|max:4'
+        ]);
+
+
+        if ($validator->fails()) {
+            return redirect('/search');
+        }
+
+
         return Inertia::render(
             'Bookings/Create',
             []
