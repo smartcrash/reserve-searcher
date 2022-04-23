@@ -12,7 +12,7 @@ import {
     NumberInputStepper,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
-import { isValid } from "date-fns";
+import { addDays, isValid } from "date-fns";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
@@ -33,8 +33,18 @@ interface Props {
 
 const toCalendar = (date: Date) => formatDate(date, "y-MM-dd");
 
-const Search = ({ rooms, ...props }: Props) => {
-    console.log(props);
+const parseDate = (value: string | null) => {
+    if (!value) return undefined;
+
+    const date = new Date(value);
+
+    if (!isValid(date)) return undefined;
+
+    return addDays(date, 1);
+};
+
+const Search = ({ rooms }: Props) => {
+    const urlParams = new URLSearchParams(window.location.search);
 
     const {
         handleSubmit,
@@ -43,9 +53,13 @@ const Search = ({ rooms, ...props }: Props) => {
         formState: { errors, isSubmitting },
     } = useForm<FormData>({
         defaultValues: {
-            checkIn: toCalendar(new Date()),
-            checkOut: toCalendar(new Date()),
-            persons: 1,
+            checkIn: toCalendar(
+                parseDate(urlParams.get("check-in")) || new Date()
+            ),
+            checkOut: toCalendar(
+                parseDate(urlParams.get("check-out")) || new Date()
+            ),
+            persons: parseInt(urlParams.get("persons") || "1"),
         },
     });
 
