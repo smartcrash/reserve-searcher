@@ -12,7 +12,7 @@ import {
     NumberInputStepper,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
-import { addDays, isValid } from "date-fns";
+import { addDays, differenceInDays, isValid } from "date-fns";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
@@ -46,22 +46,30 @@ const parseDate = (value: string | null) => {
 const Search = ({ rooms }: Props) => {
     const urlParams = new URLSearchParams(window.location.search);
 
+    const defaultValues = {
+        checkIn: toCalendar(parseDate(urlParams.get("check-in")) || new Date()),
+        checkOut: parseDate(urlParams.get("check-out"))
+            ? toCalendar(parseDate(urlParams.get("check-out"))!)
+            : undefined,
+        persons: parseInt(urlParams.get("persons") || "1"),
+    };
+
     const {
         handleSubmit,
         register,
         setError,
+        watch,
         formState: { errors, isSubmitting },
-    } = useForm<FormData>({
-        defaultValues: {
-            checkIn: toCalendar(
-                parseDate(urlParams.get("check-in")) || new Date()
-            ),
-            checkOut: toCalendar(
-                parseDate(urlParams.get("check-out")) || new Date()
-            ),
-            persons: parseInt(urlParams.get("persons") || "1"),
-        },
-    });
+    } = useForm<FormData>({ defaultValues });
+
+    const [checkIn, checkOut] = watch(["checkIn", "checkOut"]);
+
+    const nights =
+        parseDate(checkIn) && parseDate(checkOut)
+            ? Math.abs(
+                  differenceInDays(parseDate(checkIn)!, parseDate(checkOut)!)
+              )
+            : 1;
 
     const onSubmit = handleSubmit(({ checkIn, checkOut, persons }) => {
         if (!isValid(checkIn)) {
@@ -114,7 +122,13 @@ const Search = ({ rooms }: Props) => {
                             <Input
                                 id="check-out"
                                 type="date"
-                                min={toCalendar(new Date())}
+                                min={
+                                    parseDate(checkIn)
+                                        ? toCalendar(
+                                              addDays(parseDate(checkIn)!, 1)
+                                          )
+                                        : toCalendar(new Date())
+                                }
                                 max={toCalendar(MAX_BOOKING_DATE)}
                                 {...register("checkOut", {
                                     required: true,
@@ -153,7 +167,7 @@ const Search = ({ rooms }: Props) => {
                 </Button>
             </form>
 
-            <RoomsDataTable rooms={rooms} nights={1} />
+            <RoomsDataTable rooms={rooms} nights={nights} />
         </Layout>
     );
 };

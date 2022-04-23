@@ -10,9 +10,14 @@ import { capitalize, padStart } from "lodash";
 interface Props {
     rooms: Room[];
     nights: number;
+    onClick?: (room: Room) => void;
 }
 
-export const RoomsDataTable = ({ rooms, nights }: Props) => {
+export const RoomsDataTable = ({
+    rooms,
+    nights,
+    onClick = () => {},
+}: Props) => {
     const data = useMemo(
         () =>
             rooms.map(({ number, capacity, dailyPrice }) => ({
@@ -21,7 +26,7 @@ export const RoomsDataTable = ({ rooms, nights }: Props) => {
                 dailyPrice: `${toCurrency(dailyPrice)}/night`,
                 totalPrice: toCurrency(dailyPrice * nights),
             })),
-        []
+        [nights]
     );
 
     const columns = useMemo(
@@ -85,7 +90,10 @@ export const RoomsDataTable = ({ rooms, nights }: Props) => {
                 {rows.map((row) => {
                     prepareRow(row);
                     return (
-                        <Tr {...row.getRowProps()}>
+                        <Tr
+                            {...row.getRowProps()}
+                            onClick={() => onClick(rooms[row.index])}
+                        >
                             {row.cells.map((cell) => (
                                 <Td {...cell.getCellProps()}>
                                     {cell.render("Cell")}
