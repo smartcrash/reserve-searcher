@@ -11,6 +11,7 @@ import { differenceInDays } from "date-fns";
 import { capitalize, padStart } from "lodash";
 import React from "react";
 import { formatDate } from "../Helper/formatDate";
+import { getRoomType } from "../Helper/getRoomType";
 import { toCurrency } from "../Helper/toCurrency";
 import { Booking } from "../types";
 import { CopyToClipboard } from "./CopyToClipboard";
@@ -18,14 +19,6 @@ import { CopyToClipboard } from "./CopyToClipboard";
 interface Props {
     booking: Booking;
 }
-
-const getRoomType = (capacity: number) =>
-    ({
-        1: "single",
-        2: "double",
-        3: "triple",
-        4: "quadruple",
-    }[capacity]);
 
 export const BookingCard = ({ booking }: Props) => {
     const {

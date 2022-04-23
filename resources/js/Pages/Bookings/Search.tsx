@@ -1,22 +1,25 @@
-import React from "react";
 import {
     Box,
+    Button,
     FormControl,
     FormLabel,
+    HStack,
+    Input,
+    NumberDecrementStepper,
+    NumberIncrementStepper,
     NumberInput,
     NumberInputField,
     NumberInputStepper,
-    NumberIncrementStepper,
-    NumberDecrementStepper,
-    Input,
-    HStack,
-    Button,
 } from "@chakra-ui/react";
-import { Layout } from "../../Shared/Layout";
-import { useForm } from "react-hook-form";
-import { formatDate } from "../../Helper/formatDate";
-import { MAX_BOOKING_DATE } from "../../constants";
+import { Inertia } from "@inertiajs/inertia";
 import { isValid } from "date-fns";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { MAX_BOOKING_DATE } from "../../constants";
+import { formatDate } from "../../Helper/formatDate";
+import { Layout } from "../../Shared/Layout";
+import { RoomsDataTable } from "../../Shared/RoomsDataTable";
+import { Room } from "../../types";
 
 interface FormData {
     checkIn: string;
@@ -24,7 +27,15 @@ interface FormData {
     persons: number;
 }
 
-const Search = () => {
+interface Props {
+    rooms: Room[];
+}
+
+const toCalendar = (date: Date) => formatDate(date, "y-MM-dd");
+
+const Search = ({ rooms, ...props }: Props) => {
+    console.log(props);
+
     const {
         handleSubmit,
         register,
@@ -32,7 +43,8 @@ const Search = () => {
         formState: { errors, isSubmitting },
     } = useForm<FormData>({
         defaultValues: {
-            checkIn: formatDate(new Date(), "y-MM-dd"),
+            checkIn: toCalendar(new Date()),
+            checkOut: toCalendar(new Date()),
             persons: 1,
         },
     });
@@ -52,7 +64,14 @@ const Search = () => {
             });
         }
 
-        console.log({ checkIn, checkOut, persons });
+        Inertia.visit(window.location.href.split("?")[0], {
+            only: ["rooms"],
+            data: {
+                "check-in": checkIn,
+                "check-out": checkOut,
+                persons,
+            },
+        });
     });
 
     return (
@@ -65,8 +84,8 @@ const Search = () => {
                             <Input
                                 id="check-in"
                                 type="date"
-                                min={formatDate(new Date(), "y-MM-dd")}
-                                max={formatDate(MAX_BOOKING_DATE, "y-MM-dd")}
+                                min={toCalendar(new Date())}
+                                max={toCalendar(MAX_BOOKING_DATE)}
                                 {...register("checkIn", {
                                     required: true,
                                     valueAsDate: true,
@@ -81,8 +100,8 @@ const Search = () => {
                             <Input
                                 id="check-out"
                                 type="date"
-                                min={formatDate(new Date(), "y-MM-dd")}
-                                max={formatDate(MAX_BOOKING_DATE, "y-MM-dd")}
+                                min={toCalendar(new Date())}
+                                max={toCalendar(MAX_BOOKING_DATE)}
                                 {...register("checkOut", {
                                     required: true,
                                     valueAsDate: true,
@@ -97,6 +116,7 @@ const Search = () => {
                         <FormLabel htmlFor="persons">Persons</FormLabel>
                         <NumberInput step={1} min={1} max={4}>
                             <NumberInputField
+                                id={"persons"}
                                 {...register("persons", {
                                     required: true,
                                     valueAsNumber: true,
@@ -115,9 +135,11 @@ const Search = () => {
                     colorScheme={"purple"}
                     isLoading={isSubmitting}
                 >
-                    Buscar
+                    Search
                 </Button>
             </form>
+
+            <RoomsDataTable rooms={rooms} nights={1} />
         </Layout>
     );
 };
