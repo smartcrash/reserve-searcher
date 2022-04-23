@@ -92,6 +92,7 @@ export const RoomsDataTable = ({
                     return (
                         <Tr
                             {...row.getRowProps()}
+                            style={{ cursor: "pointer" }}
                             onClick={() => onClick(rooms[row.index])}
                         >
                             {row.cells.map((cell) => (
