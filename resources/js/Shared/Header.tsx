@@ -9,7 +9,7 @@ export const Header = () => {
             <Container maxW={"container.xl"}>
                 <HStack justifyContent={"space-between"}>
                     <Box>
-                        <GoBack href={"/"} />
+                        <GoBack />
                     </Box>
                     <Heading
                         textAlign={"center"}

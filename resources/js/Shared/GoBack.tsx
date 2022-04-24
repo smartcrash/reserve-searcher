@@ -1,10 +1,9 @@
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { IconButton } from "@chakra-ui/react";
-import { Inertia } from "@inertiajs/inertia";
 import { usePage } from "@inertiajs/inertia-react";
 import React from "react";
 
-export const GoBack = ({ href }: { href: string }) => {
+export const GoBack = () => {
     const { url } = usePage();
     const goBack = () => window.history.back();
 
