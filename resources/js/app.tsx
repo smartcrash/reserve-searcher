@@ -1,8 +1,8 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
+import { ChakraProvider } from "@chakra-ui/react";
 import { createInertiaApp } from "@inertiajs/inertia-react";
 import { InertiaProgress } from "@inertiajs/progress";
-import { ChakraProvider } from "@chakra-ui/react";
+import React from "react";
+import { createRoot } from "react-dom/client";
 import { theme } from "./theme";
 
 InertiaProgress.init();

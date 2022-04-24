@@ -1,25 +1,15 @@
-import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { Box, Container, Heading, HStack, IconButton } from "@chakra-ui/react";
-import { Link, usePage } from "@inertiajs/inertia-react";
+import { Box, Container, Heading, HStack } from "@chakra-ui/react";
+import { Link } from "@inertiajs/inertia-react";
 import React from "react";
+import { GoBack } from "./GoBack";
 
 export const Header = () => {
-    const { url } = usePage();
-    const goBack = () => window.history.back();
-
     return (
         <Box py={"5"} mb={"5"}>
             <Container maxW={"container.xl"}>
                 <HStack justifyContent={"space-between"}>
                     <Box>
-                        {url !== "/" && (
-                            <IconButton
-                                onClick={goBack}
-                                aria-label="Go back"
-                                size={"lg"}
-                                icon={<ChevronLeftIcon fontSize={"4xl"} />}
-                            />
-                        )}
+                        <GoBack href={"/"} />
                     </Box>
                     <Heading
                         textAlign={"center"}
