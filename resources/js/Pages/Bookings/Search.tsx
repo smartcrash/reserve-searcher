@@ -91,6 +91,7 @@ const Search = ({ rooms }: Props) => {
         }
 
         Inertia.visit(window.location.href.split("?")[0], {
+            replace: true,
             only: ["rooms"],
             data: {
                 "check-in": checkIn,
