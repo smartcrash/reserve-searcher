@@ -11,7 +11,7 @@ export const Layout = ({ children }: { children?: any }) => {
             alignItems={"stretch"}
         >
             <Header />
-            <Box flexGrow={1}>
+            <Box flexGrow={1} pb={10}>
                 <Container maxW={"container.xl"}>{children}</Container>
             </Box>
             <Footer />

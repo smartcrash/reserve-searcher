@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, chakra, Box } from "@chakra-ui/react";
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { useTable, useSortBy } from "react-table";
 import { Room } from "../types";
@@ -67,7 +67,11 @@ export const RoomsDataTable = ({
                 {headerGroups.map((headerGroup) => (
                     <Tr {...headerGroup.getHeaderGroupProps()}>
                         {headerGroup.headers.map((column: any) => (
-                            <Th
+                            <Box
+                                bg={"gray.100"}
+                                borderBottom={"1px"}
+                                borderColor={"gray.200"}
+                                as={Th}
                                 {...column.getHeaderProps(
                                     column.getSortByToggleProps()
                                 )}
@@ -82,7 +86,7 @@ export const RoomsDataTable = ({
                                         )
                                     ) : null}
                                 </chakra.span>
-                            </Th>
+                            </Box>
                         ))}
                     </Tr>
                 ))}
@@ -91,18 +95,20 @@ export const RoomsDataTable = ({
                 {rows.map((row) => {
                     prepareRow(row);
                     return (
-                        <Tr
-                            {...row.getRowProps()}
-                            style={{ cursor: "pointer" }}
+                        <Box
+                            as={Tr}
+                            cursor={"pointer"}
+                            _hover={{ bg: "gray.200" }}
                             data-testid={`room-${row.original.id}`}
                             onClick={() => onClick(rooms[row.index])}
+                            {...row.getRowProps()}
                         >
                             {row.cells.map((cell) => (
                                 <Td {...cell.getCellProps()}>
                                     {cell.render("Cell")}
                                 </Td>
                             ))}
-                        </Tr>
+                        </Box>
                     );
                 })}
             </Tbody>

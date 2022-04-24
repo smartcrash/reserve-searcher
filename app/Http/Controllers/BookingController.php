@@ -45,7 +45,6 @@ class BookingController extends Controller
             return Inertia::render(
                 'Bookings/Search',
                 [
-                    'rooms' => [],
                     'errors' => $validator->errors()
                 ]
             );

@@ -2,10 +2,12 @@ import { Search2Icon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
+    Flex,
     FormControl,
     FormLabel,
     Grid,
     GridItem,
+    Heading,
     Input,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
@@ -27,7 +29,7 @@ interface FormData {
 }
 
 interface Props {
-    rooms: Room[];
+    rooms?: Room[];
 }
 
 const toCalendar = (date: Date) => formatDate(date, "y-MM-dd");
@@ -146,7 +148,17 @@ const Search = ({ rooms }: Props) => {
 
     return (
         <Layout>
-            <form onSubmit={onSubmit}>
+            <Box
+                as={"form"}
+                onSubmit={onSubmit}
+                border={{ base: 0, md: "1px" }}
+                borderBottom={"1px"}
+                borderRadius={{ base: 0, md: "xl" }}
+                borderColor={{ base: "gray.300", md: "gray.300" }}
+                px={{ base: 2, md: 8 }}
+                py={8}
+                mb={10}
+            >
                 <Grid
                     mb={6}
                     templateColumns={{
@@ -230,19 +242,33 @@ const Search = ({ rooms }: Props) => {
                     </FormControl>
                 </Box>
 
-                <Button
-                    type="submit"
-                    colorScheme={"purple"}
-                    leftIcon={<Search2Icon />}
-                    isLoading={isSubmitting}
-                    size={"lg"}
-                    mt={6}
-                >
-                    Search
-                </Button>
-            </form>
+                <Flex justifyContent={"flex-end"}>
+                    <Button
+                        type="submit"
+                        w={"full"}
+                        colorScheme={"purple"}
+                        leftIcon={<Search2Icon />}
+                        isLoading={isSubmitting}
+                        size={"lg"}
+                        mt={6}
+                    >
+                        Search
+                    </Button>
+                </Flex>
+            </Box>
 
-            <RoomsDataTable rooms={rooms} nights={nights} onClick={onClick} />
+            {rooms &&
+                (rooms.length ? (
+                    <RoomsDataTable
+                        rooms={rooms}
+                        nights={nights || 1}
+                        onClick={onClick}
+                    />
+                ) : (
+                    <Heading textAlign={"center"} color={"gray.500"} my={"20"}>
+                        No rooms available :(
+                    </Heading>
+                ))}
         </Layout>
     );
 };
