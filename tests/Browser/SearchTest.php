@@ -26,6 +26,7 @@ class SearchTest extends DuskTestCase
 
             $browser->visit($baseUrl . '&persons=1')
                 ->assertSee('Single')
+                ->press('Next')
                 ->assertSee('Double')
                 ->assertSee('Triple')
                 ->assertSee('Quadruple')
@@ -77,7 +78,7 @@ class SearchTest extends DuskTestCase
     public function test_can_navigate_create_booking_by_clicking_room()
     {
         $this->browse(function (Browser $browser) {
-            $room = Room::get()->random();
+            $room = Room::get()->first();
 
             $checkIn = now()->toDateString();
             $checkOut = now()->addDay(1)->toDateString();
