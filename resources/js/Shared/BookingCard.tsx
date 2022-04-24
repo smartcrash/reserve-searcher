@@ -46,8 +46,9 @@ export const BookingCard = ({ booking }: Props) => {
         <Box
             bg={"white"}
             border={"1px"}
-            borderColor={"gray.200"}
+            borderColor={"gray.300"}
             rounded={"lg"}
+            boxShadow={"sm"}
             data-testid={`booking-${id}`}
         >
             <Box px={{ sm: 6, md: 4 }} py={5}>
@@ -72,7 +73,7 @@ export const BookingCard = ({ booking }: Props) => {
                 </Text>
             </Box>
 
-            <Box borderTop={"1px"} borderColor={"gray.200"}>
+            <Box borderTop={"1px"} borderColor={"gray.300"}>
                 {Object.entries(attributes).map(([key, value]) => (
                     <dl key={`${key}-${value}`}>
                         <Grid
@@ -115,7 +116,7 @@ export const BookingCard = ({ booking }: Props) => {
                     mt={4}
                     px={{ sm: 6, md: 4 }}
                     borderTop={"1px"}
-                    borderColor={"gray.200"}
+                    borderColor={"gray.300"}
                 >
                     <Heading fontSize={"md"} mb={3}>
                         Contact
