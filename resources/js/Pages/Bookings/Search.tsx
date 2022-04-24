@@ -9,10 +9,16 @@ import {
     GridItem,
     Heading,
     Input,
+    Stat,
+    StatLabel,
+    StatNumber,
+    StatHelpText,
+    StatArrow,
+    StatGroup,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
 import { addDays, differenceInDays, isValid } from "date-fns";
-import { isNull } from "lodash";
+import { filter, isNull } from "lodash";
 import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
@@ -259,11 +265,50 @@ const Search = ({ rooms }: Props) => {
 
             {rooms &&
                 (rooms.length ? (
-                    <RoomsDataTable
-                        rooms={rooms}
-                        nights={nights || 1}
-                        onClick={onClick}
-                    />
+                    <>
+                        <StatGroup mb={10}>
+                            <Stat>
+                                <StatLabel>Available rooms</StatLabel>
+                                <StatNumber fontSize={"4xl"}>
+                                    {rooms.length}
+                                </StatNumber>
+                            </Stat>
+
+                            <Stat display={{ base: "none", md: "block" }}>
+                                <StatLabel>Single</StatLabel>
+                                <StatNumber fontSize={"4xl"}>
+                                    {filter(rooms, { capacity: 1 }).length}
+                                </StatNumber>
+                            </Stat>
+
+                            <Stat display={{ base: "none", md: "block" }}>
+                                <StatLabel>Double</StatLabel>
+                                <StatNumber fontSize={"4xl"}>
+                                    {filter(rooms, { capacity: 2 }).length}
+                                </StatNumber>
+                            </Stat>
+
+                            <Stat display={{ base: "none", md: "block" }}>
+                                <StatLabel>Triple</StatLabel>
+                                <StatNumber fontSize={"4xl"}>
+                                    {filter(rooms, { capacity: 3 }).length}
+                                </StatNumber>
+                            </Stat>
+
+                            <Stat display={{ base: "none", md: "block" }}>
+                                <StatLabel>Quadruple</StatLabel>
+                                <StatNumber fontSize={"4xl"}>
+                                    {filter(rooms, { capacity: 4 }).length}
+                                </StatNumber>
+                            </Stat>
+                        </StatGroup>
+
+                        <RoomsDataTable
+                            rooms={rooms}
+                            nights={nights || 1}
+                            onClick={onClick}
+                        />
+                    </>
                 ) : (
                     <Heading textAlign={"center"} color={"gray.500"} my={"20"}>
                         No rooms available :(
