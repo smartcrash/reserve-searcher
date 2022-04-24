@@ -27,26 +27,27 @@ class SearchTest extends DuskTestCase
             $browser->visit($baseUrl . '&persons=1')
                 ->assertSee('Single')
                 ->press('Next')
-                ->assertSee('Double')
-                ->assertSee('Triple')
-                ->assertSee('Quadruple')
+                ->assertSeeIn('[data-testid="table"]', 'Double')
+                ->assertSeeIn('[data-testid="table"]', 'Triple')
+                ->assertSeeIn('[data-testid="table"]', 'Quadruple')
                 //
                 ->visit($baseUrl . '&persons=2')
-                ->assertSee('Double')
-                ->assertSee('Triple')
-                ->assertSee('Quadruple')
+                ->assertDontSeeIn('[data-testid="table"]', 'Single')
+                ->assertSeeIn('[data-testid="table"]', 'Double')
+                ->assertSeeIn('[data-testid="table"]', 'Triple')
+                ->assertSeeIn('[data-testid="table"]', 'Quadruple')
                 //
                 ->visit($baseUrl . '&persons=3')
-                ->assertDontSee('Single')
-                ->assertDontSee('Double')
-                ->assertSee('Triple')
-                ->assertSee('Quadruple')
+                ->assertDontSeeIn('[data-testid="table"]', 'Single')
+                ->assertDontSeeIn('[data-testid="table"]', 'Double')
+                ->assertSeeIn('[data-testid="table"]', 'Triple')
+                ->assertSeeIn('[data-testid="table"]', 'Quadruple')
                 //
                 ->visit($baseUrl . '&persons=4')
-                ->assertDontSee('Single')
-                ->assertDontSee('Double')
-                ->assertDontSee('Triple')
-                ->assertSee('Quadruple');
+                ->assertDontSeeIn('[data-testid="table"]', 'Single')
+                ->assertDontSeeIn('[data-testid="table"]', 'Double')
+                ->assertDontSeeIn('[data-testid="table"]', 'Triple')
+                ->assertSeeIn('[data-testid="table"]', 'Quadruple');
         });
     }
 

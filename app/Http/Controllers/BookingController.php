@@ -95,6 +95,10 @@ class BookingController extends Controller
         $room = Room::findOrFail($validated['roomId']);
         $persons = (int) $validated['persons'];
 
+        if (!$room->checkAvailability($checkIn, $checkOut)) {
+            return redirect('/search');
+        }
+
         return Inertia::render(
             'Bookings/Create',
             compact('checkIn', 'checkOut', 'room', 'persons')
@@ -125,6 +129,10 @@ class BookingController extends Controller
 
         $checkIn = Carbon::create($validated['checkIn']);
         $checkOut = Carbon::create($validated['checkOut']);
+
+        if (!$room->checkAvailability($checkIn, $checkOut)) {
+            return redirect('/search');
+        }
 
         $booking->identifier = Str::random(10);
         $booking->totalPrice = $room->dailyPrice * $checkIn->diff($checkOut)->days;

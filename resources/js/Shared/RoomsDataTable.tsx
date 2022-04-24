@@ -102,7 +102,7 @@ export const RoomsDataTable = ({
 
     return (
         <>
-            <Table {...getTableProps()}>
+            <Table {...getTableProps()} data-testid={"table"}>
                 <Thead>
                     {headerGroups.map((headerGroup) => (
                         <Tr {...headerGroup.getHeaderGroupProps()}>
