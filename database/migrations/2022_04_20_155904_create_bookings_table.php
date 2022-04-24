@@ -16,8 +16,8 @@ class CreateBookingsTable extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->string('identifier');
-            $table->timestamp('checkIn');
-            $table->timestamp('checkOut');
+            $table->date('checkIn');
+            $table->date('checkOut');
             $table->double('totalPrice', 8, 2, true);
             $table->integer('persons', false, true);
             $table->unsignedBigInteger('roomId');

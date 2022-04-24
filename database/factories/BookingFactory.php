@@ -23,8 +23,8 @@ class BookingFactory extends Factory
             'checkIn' => now(),
             'checkOut' => now()->addDay(1),
             'totalPrice' => $room->dailyPrice,
-            'persons' => 1,
-            'roomId' => rand(1, $room->capacity),
+            'persons' => rand(1, $room->capacity),
+            'roomId' => $room->id,
             'guestId' => $guest->id,
             'createdAt' => now(),
         ];

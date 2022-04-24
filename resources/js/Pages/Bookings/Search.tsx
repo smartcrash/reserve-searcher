@@ -76,14 +76,14 @@ const Search = ({ rooms }: Props) => {
             : 1;
 
     const onSubmit = handleSubmit(({ checkIn, checkOut, persons }) => {
-        if (!isValid(checkIn)) {
+        if (!parseDate(checkIn)) {
             return setError("checkIn", {
                 type: "required",
                 message: "Invalid Date",
             });
         }
 
-        if (!isValid(checkOut)) {
+        if (!parseDate(checkOut)) {
             return setError("checkOut", {
                 type: "required",
                 message: "Invalid Date",

@@ -2,6 +2,7 @@
 
 namespace Tests\Browser;
 
+use App\Models\Booking;
 use App\Models\Room;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Laravel\Dusk\Browser;
@@ -45,6 +46,31 @@ class SearchTest extends DuskTestCase
                 ->assertDontSee('Double')
                 ->assertDontSee('Triple')
                 ->assertSee('Quadruple');
+        });
+    }
+
+    public function test_can_only_see_available_rooms()
+    {
+        $this->browse(function (Browser $browser) {
+            Booking::query()->delete();
+            Room::query()->delete();
+
+            Room::create(['capacity' => 1, 'dailyPrice' => 20, 'number' => 1]);
+            Booking::factory()->count(1)->create();
+            Room::create(['capacity' => 1, 'dailyPrice' => 20, 'number' => 2]);
+
+            $booking = Booking::all()->first();
+            $bookedRoom = $booking->room;
+            $availableRoom = Room::orderBy('id', 'desc')->get()->first();
+
+            $checkIn = now()->toDateString();
+            $checkOut = now()->addDay(1)->toDateString();
+            $persons = 1;
+
+            $browser
+                ->visit('/search?check-in=' . urlencode($checkIn) . '&check-out=' . urlencode($checkOut) . '&persons=' . $persons)
+                ->assertDontSee(str_pad($bookedRoom->number, 2, '0', STR_PAD_LEFT))
+                ->assertSee(str_pad($availableRoom->number, 2, '0', STR_PAD_LEFT));
         });
     }
 

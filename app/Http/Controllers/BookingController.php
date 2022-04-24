@@ -52,13 +52,19 @@ class BookingController extends Controller
         }
 
         $validated = $validator->validated();
-        extract($validated);
+        $persons = $validated['persons'];
+        $checkIn = Carbon::create($validated['check-in']);
+        $checkOut = Carbon::create($validated['check-out']);
 
         $rooms = Room::where('capacity', '>=', $persons)->get();
+        $rooms = $rooms
+            ->filter(function ($room) use ($checkIn, $checkOut) {
+                return $room->checkAvailability($checkIn, $checkOut);
+            })->values();
 
         return Inertia::render(
             'Bookings/Search',
-            compact('rooms', 'validated')
+            ['rooms' => $rooms]
         );
     }
 
