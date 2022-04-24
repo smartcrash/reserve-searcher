@@ -6,17 +6,12 @@ import {
     FormLabel,
     Grid,
     GridItem,
-    HStack,
     Input,
-    NumberDecrementStepper,
-    NumberIncrementStepper,
-    NumberInput,
-    NumberInputField,
-    NumberInputStepper,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
 import { addDays, differenceInDays, isValid } from "date-fns";
-import React, { useCallback } from "react";
+import { isNull } from "lodash";
+import React, { useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
 import { formatDate } from "../../Helper/formatDate";
@@ -28,6 +23,7 @@ interface FormData {
     checkIn: string;
     checkOut: string;
     persons: number;
+    nights: number;
 }
 
 interface Props {
@@ -46,37 +42,65 @@ const parseDate = (value: string | null) => {
     return addDays(date, 1);
 };
 
-const Search = ({ rooms }: Props) => {
+const diffInDays = (dateLeft: string, dateRight: string) => {
+    const a = parseDate(dateLeft);
+    const b = parseDate(dateRight);
+
+    if (a && b) return Math.abs(differenceInDays(a, b));
+
+    return null;
+};
+
+const getDefaultValues = (): Partial<FormData> => {
     const urlParams = new URLSearchParams(window.location.search);
 
+    const checkIn = toCalendar(
+        parseDate(urlParams.get("check-in")) || new Date()
+    );
+
+    const checkOut = parseDate(urlParams.get("check-out"))
+        ? toCalendar(parseDate(urlParams.get("check-out"))!)
+        : undefined;
+
     const defaultValues = {
-        checkIn: toCalendar(parseDate(urlParams.get("check-in")) || new Date()),
-        checkOut: parseDate(urlParams.get("check-out"))
-            ? toCalendar(parseDate(urlParams.get("check-out"))!)
-            : undefined,
-        persons: parseInt(urlParams.get("persons") || "1"),
+        checkIn,
+        checkOut,
+        persons: Number.parseInt(urlParams.get("persons") || "1"),
+        nights: checkIn && checkOut ? diffInDays(checkIn, checkOut) || 0 : 0,
     };
 
+    return defaultValues;
+};
+
+const Search = ({ rooms }: Props) => {
     const {
         handleSubmit,
         register,
+        setValue,
         setError,
         watch,
         formState: { errors, isSubmitting },
-    } = useForm<FormData>({ defaultValues });
+    } = useForm<FormData>({ defaultValues: getDefaultValues() });
 
-    const [checkIn, checkOut, persons] = watch([
+    const [checkIn, checkOut, persons, nights] = watch([
         "checkIn",
         "checkOut",
         "persons",
+        "nights",
     ]);
 
-    const nights =
-        parseDate(checkIn) && parseDate(checkOut)
-            ? Math.abs(
-                  differenceInDays(parseDate(checkIn)!, parseDate(checkOut)!)
-              )
-            : 1;
+    useEffect(() => {
+        if (nights && parseDate(checkIn)) {
+            const dateRight = addDays(parseDate(checkIn)!, nights);
+            setValue("checkOut", toCalendar(dateRight));
+        }
+    }, [nights]);
+
+    useEffect(() => {
+        const newValue = diffInDays(checkIn, checkOut);
+
+        if (!isNull(newValue)) setValue("nights", newValue);
+    }, [checkIn, checkOut]);
 
     const onSubmit = handleSubmit(({ checkIn, checkOut, persons }) => {
         if (!parseDate(checkIn)) {
@@ -127,7 +151,7 @@ const Search = ({ rooms }: Props) => {
                     mb={6}
                     templateColumns={{
                         sm: "1fr",
-                        md: "repeat(2, 1fr)",
+                        md: "1fr 1fr 150px",
                     }}
                     gap={6}
                 >
@@ -170,24 +194,39 @@ const Search = ({ rooms }: Props) => {
                             />
                         </FormControl>
                     </GridItem>
+
+                    <GridItem>
+                        <FormControl isInvalid={!!errors.nights}>
+                            <FormLabel htmlFor="persons">Nights</FormLabel>
+                            <Input
+                                id={"nights"}
+                                type={"number"}
+                                step={1}
+                                min={1}
+                                size={"lg"}
+                                {...register("nights", {
+                                    required: true,
+                                    valueAsNumber: true,
+                                })}
+                            />
+                        </FormControl>
+                    </GridItem>
                 </Grid>
 
                 <Box>
                     <FormControl isInvalid={!!errors.persons} maxWidth={"40"}>
                         <FormLabel htmlFor="persons">Persons</FormLabel>
-                        <NumberInput step={1} min={1} max={4} size={"lg"}>
-                            <NumberInputField
-                                id={"persons"}
-                                {...register("persons", {
-                                    required: true,
-                                    valueAsNumber: true,
-                                })}
-                            />
-                            <NumberInputStepper>
-                                <NumberIncrementStepper />
-                                <NumberDecrementStepper />
-                            </NumberInputStepper>
-                        </NumberInput>
+                        <Input
+                            id={"persons"}
+                            type={"number"}
+                            step={1}
+                            min={1}
+                            size={"lg"}
+                            {...register("persons", {
+                                required: true,
+                                valueAsNumber: true,
+                            })}
+                        />
                     </FormControl>
                 </Box>
 
