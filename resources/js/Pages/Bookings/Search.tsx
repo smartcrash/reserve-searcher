@@ -1,8 +1,11 @@
+import { Search2Icon } from "@chakra-ui/icons";
 import {
     Box,
     Button,
     FormControl,
     FormLabel,
+    Grid,
+    GridItem,
     HStack,
     Input,
     NumberDecrementStepper,
@@ -120,13 +123,21 @@ const Search = ({ rooms }: Props) => {
     return (
         <Layout>
             <form onSubmit={onSubmit}>
-                <HStack>
-                    <Box flexGrow={1}>
+                <Grid
+                    mb={6}
+                    templateColumns={{
+                        sm: "1fr",
+                        md: "repeat(2, 1fr)",
+                    }}
+                    gap={6}
+                >
+                    <GridItem>
                         <FormControl isInvalid={!!errors.checkIn}>
                             <FormLabel htmlFor="check-in">Check-in</FormLabel>
                             <Input
                                 id="check-in"
                                 type="date"
+                                size={"lg"}
                                 min={toCalendar(new Date())}
                                 max={toCalendar(MAX_BOOKING_DATE)}
                                 {...register("checkIn", {
@@ -135,14 +146,15 @@ const Search = ({ rooms }: Props) => {
                                 })}
                             />
                         </FormControl>
-                    </Box>
+                    </GridItem>
 
-                    <Box flexGrow={1}>
+                    <GridItem>
                         <FormControl isInvalid={!!errors.checkOut}>
                             <FormLabel htmlFor="check-out">Check-out</FormLabel>
                             <Input
                                 id="check-out"
                                 type="date"
+                                size={"lg"}
                                 min={
                                     parseDate(checkIn)
                                         ? toCalendar(
@@ -157,13 +169,13 @@ const Search = ({ rooms }: Props) => {
                                 })}
                             />
                         </FormControl>
-                    </Box>
-                </HStack>
+                    </GridItem>
+                </Grid>
 
                 <Box>
-                    <FormControl isInvalid={!!errors.persons}>
+                    <FormControl isInvalid={!!errors.persons} maxWidth={"40"}>
                         <FormLabel htmlFor="persons">Persons</FormLabel>
-                        <NumberInput step={1} min={1} max={4}>
+                        <NumberInput step={1} min={1} max={4} size={"lg"}>
                             <NumberInputField
                                 id={"persons"}
                                 {...register("persons", {
@@ -182,7 +194,10 @@ const Search = ({ rooms }: Props) => {
                 <Button
                     type="submit"
                     colorScheme={"purple"}
+                    leftIcon={<Search2Icon />}
                     isLoading={isSubmitting}
+                    size={"lg"}
+                    mt={6}
                 >
                     Search
                 </Button>
