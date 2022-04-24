@@ -51,7 +51,7 @@ export const BookingCard = ({ booking }: Props) => {
             boxShadow={"sm"}
             data-testid={`booking-${id}`}
         >
-            <Box px={{ sm: 6, md: 4 }} py={5}>
+            <Box px={4} py={5}>
                 <CopyToClipboard value={identifier}>
                     <Heading
                         fontSize={"lg"}
@@ -78,11 +78,11 @@ export const BookingCard = ({ booking }: Props) => {
                     <dl key={`${key}-${value}`}>
                         <Grid
                             bg={"gray.50"}
-                            px={{ sm: 6, md: 4 }}
+                            px={4}
                             py={2}
                             gridColumn={2}
                             templateColumns={"repeat(3, 1fr)"}
-                            gap={{ sm: 4 }}
+                            gap={4}
                         >
                             <GridItem
                                 as={"dt"}
@@ -95,13 +95,13 @@ export const BookingCard = ({ booking }: Props) => {
                             <GridItem
                                 as={"dd"}
                                 mt={{
-                                    sm: 0,
+                                    base: 0,
                                     md: 1,
                                 }}
                                 fontSize={"sm"}
                                 color={"gray.900"}
                                 colSpan={{
-                                    sm: 3,
+                                    base: 3,
                                     md: 2,
                                 }}
                             >
@@ -114,7 +114,7 @@ export const BookingCard = ({ booking }: Props) => {
                 <Box
                     py={4}
                     mt={4}
-                    px={{ sm: 6, md: 4 }}
+                    px={4}
                     borderTop={"1px"}
                     borderColor={"gray.300"}
                 >
