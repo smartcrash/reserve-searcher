@@ -35,8 +35,8 @@ class BookingController extends Controller
     public function search(Request $request)
     {
         $validator = Validator::make($request->query(), [
-            'check-in' => 'required|date',
-            'check-out' => 'required|date',
+            'check-in' => 'required|date|after:yesterday',
+            'check-out' => 'required|date|before_or_equal:2022-12-31',
             'persons' => 'required|integer|min:1|max:4'
         ]);
 
@@ -77,8 +77,8 @@ class BookingController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->query(), [
-            'check-in' => 'required|date',
-            'check-out' => 'required|date',
+            'check-in' => 'required|date|after:yesterday',
+            'check-out' => 'required|date|before_or_equal:2022-12-31',
             'roomId' => 'required|exists:rooms,id',
             'persons' => 'required|integer|min:1|max:4'
         ]);
@@ -114,8 +114,8 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'checkIn' => 'required|date',
-            'checkOut' => 'required|date',
+            'checkIn' => 'required|date|after:yesterday',
+            'checkOut' => 'required|date|before_or_equal:2022-12-31',
             'fullName' => 'required|min:4',
             'email' => 'required|email',
             'phoneNumber' => 'required',
