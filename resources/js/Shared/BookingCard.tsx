@@ -1,12 +1,15 @@
 import {
     Box,
+    Button,
     Flex,
     Grid,
     GridItem,
     Heading,
+    HStack,
     Link,
     Text,
 } from "@chakra-ui/react";
+import { Inertia } from "@inertiajs/inertia";
 import { differenceInDays } from "date-fns";
 import { capitalize, padStart } from "lodash";
 import React from "react";
@@ -40,6 +43,14 @@ export const BookingCard = ({ booking }: Props) => {
         Price: toCurrency(totalPrice),
         Persons: persons,
         "Room Type": capitalize(getRoomType(room.capacity)),
+    };
+
+    const onDelete = () => {
+        if (
+            window.confirm("Are you sure do you want to delete this booking?")
+        ) {
+            Inertia.delete(`/${id}`);
+        }
     };
 
     return (
@@ -155,6 +166,25 @@ export const BookingCard = ({ booking }: Props) => {
                             </Link>
                         </Box>
                     </Flex>
+                </Box>
+
+                <Box
+                    py={2}
+                    mt={4}
+                    px={4}
+                    borderTop={"1px"}
+                    borderColor={"gray.300"}
+                >
+                    <HStack justifyContent={"flex-end"}>
+                        <Button
+                            onClick={onDelete}
+                            variant={"ghost"}
+                            colorScheme={"red"}
+                            size={"sm"}
+                        >
+                            Delete
+                        </Button>
+                    </HStack>
                 </Box>
             </Box>
         </Box>

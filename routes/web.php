@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [BookingController::class, 'index']);
+Route::delete('/{id}', [BookingController::class, 'destroy']);
 Route::get('/search', [BookingController::class, 'search']);
 Route::get('/new', [BookingController::class, 'create']);
 Route::post('/new', [BookingController::class, 'store']);

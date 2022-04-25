@@ -145,6 +145,25 @@ class BookingController extends Controller
         $booking->save();
 
         $request->session()->flash('message', 'Created a new Booking');
+
+        return redirect('/');
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request, string $id)
+    {
+        $booking = Booking::findOrFail($id);
+
+        $booking->delete();
+
+        $request->session()->flash('message', 'Booking deleted');
+
         return redirect('/');
     }
 }
