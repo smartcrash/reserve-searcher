@@ -35,8 +35,8 @@ class BookingController extends Controller
     public function search(Request $request)
     {
         $validator = Validator::make($request->query(), [
-            'check-in' => 'required|date|after:yesterday',
-            'check-out' => 'required|date|before_or_equal:2022-12-31',
+            'checkIn' => 'required|date|after:yesterday|date_format:Y-m-d',
+            'checkOut' => 'required|date|before_or_equal:2022-12-31|date_format:Y-m-d',
             'persons' => 'required|integer|min:1'
         ]);
 
@@ -52,8 +52,9 @@ class BookingController extends Controller
 
         $validated = $validator->validated();
         $persons = $validated['persons'];
-        $checkIn = Carbon::create($validated['check-in']);
-        $checkOut = Carbon::create($validated['check-out']);
+
+        $checkIn = Carbon::parse($validated['checkIn']);
+        $checkOut = Carbon::parse($validated['checkOut']);
 
         $rooms = Room::where('capacity', '>=', $persons)->get();
         $rooms = $rooms
@@ -77,8 +78,8 @@ class BookingController extends Controller
     public function create(Request $request)
     {
         $validator = Validator::make($request->query(), [
-            'check-in' => 'required|date|after:yesterday',
-            'check-out' => 'required|date|before_or_equal:2022-12-31',
+            'checkIn' => 'required|date|after:yesterday|date_format:Y-m-d',
+            'checkOut' => 'required|date|before_or_equal:2022-12-31|date_format:Y-m-d',
             'roomId' => 'required|exists:rooms,id',
             'persons' => 'required|integer|min:1'
         ]);
@@ -90,13 +91,15 @@ class BookingController extends Controller
 
         $validated = $validator->validated();
 
-        $checkIn = Carbon::create($validated['check-in']);
-        $checkOut = Carbon::create($validated['check-out']);
+        $checkIn = Carbon::parse($validated['checkIn']);
+        $checkOut = Carbon::parse($validated['checkOut']);
+
         $room = Room::findOrFail($validated['roomId']);
         $persons = (int) $validated['persons'];
 
         if (!$room->checkAvailability($checkIn, $checkOut) || $persons > $room->capacity) {
             $request->session()->flash('error', 'Invalid room selection');
+
             return redirect('/search');
         }
 
@@ -115,8 +118,8 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'checkIn' => 'required|date|after:yesterday',
-            'checkOut' => 'required|date|before_or_equal:2022-12-31',
+            'checkIn' => 'required|date|after:yesterday|date_format:Y-m-d',
+            'checkOut' => 'required|date|before_or_equal:2022-12-31|date_format:Y-m-d',
             'fullName' => 'required',
             'email' => 'required|email',
             'phoneNumber' => 'required',
@@ -128,8 +131,8 @@ class BookingController extends Controller
         $room = Room::findOrFail($validated['roomId']);
         $guest = Guest::create($validated);
 
-        $checkIn = Carbon::create($validated['checkIn']);
-        $checkOut = Carbon::create($validated['checkOut']);
+        $checkIn = Carbon::parse($validated['checkIn']);
+        $checkOut = Carbon::parse($validated['checkOut']);
 
         if (!$room->checkAvailability($checkIn, $checkOut) || $booking->persons > $room->capacity) {
             $request->session()->flash('error', 'Invalid room selection');
@@ -138,6 +141,8 @@ class BookingController extends Controller
 
         $booking->identifier = Str::random(10);
         $booking->totalPrice = $room->dailyPrice * $checkIn->diff($checkOut)->days;
+        $booking->checkIn = $checkIn;
+        $booking->checkOut = $checkOut;
         $booking->guest()->associate($guest);
         $booking->room()->associate($room);
         $booking->createdAt = now();

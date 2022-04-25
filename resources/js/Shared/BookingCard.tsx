@@ -29,11 +29,11 @@ export const BookingCard = ({ booking }: Props) => {
         identifier,
         room,
         createdAt,
-        checkIn,
         persons,
-        checkOut,
         guest,
         totalPrice,
+        checkIn,
+        checkOut,
     } = booking;
 
     const attributes = {

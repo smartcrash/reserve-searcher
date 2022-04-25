@@ -12,12 +12,13 @@ import {
     Text,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
-import { addDays, differenceInDays } from "date-fns";
-import { capitalize } from "lodash";
+import { differenceInDays, parse } from "date-fns";
+import { capitalize, padStart } from "lodash";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { formatDate } from "../../Helper/formatDate";
 import { getRoomType } from "../../Helper/getRoomType";
+import { toCalendar } from "../../Helper/toCalendar";
 import { toCurrency } from "../../Helper/toCurrency";
 import { Layout } from "../../Shared/Layout";
 import { Room } from "../../types";
@@ -36,9 +37,11 @@ interface Props {
 }
 
 const Create = ({ room, ...props }: Props) => {
-    const checkIn = addDays(new Date(props.checkIn), 1);
-    const checkOut = addDays(new Date(props.checkOut), 1);
-    const persons = parseInt(props.persons);
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const checkIn = parse(urlParams.get("checkIn")!, "y-MM-dd", new Date());
+    const checkOut = parse(urlParams.get("checkOut")!, "y-MM-dd", new Date());
+    const persons = Number.parseInt(urlParams.get("persons")!);
 
     const {
         register,
@@ -50,8 +53,8 @@ const Create = ({ room, ...props }: Props) => {
         const roomId = room.id;
 
         const data = {
-            checkIn,
-            checkOut,
+            checkIn: toCalendar(checkIn),
+            checkOut: toCalendar(checkOut),
             persons,
             fullName,
             email,
@@ -70,6 +73,7 @@ const Create = ({ room, ...props }: Props) => {
         Nights: nights,
         Price: toCurrency(room.dailyPrice * nights),
         Persons: persons,
+        "Room Number": `#${padStart(room.number, 2, "0")}`,
         "Room Type": capitalize(getRoomType(room.capacity)),
     };
 

@@ -15,13 +15,11 @@ import {
     StatNumber,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
-import { addDays } from "date-fns";
-import { filter } from "lodash";
+import { differenceInDays, isValid, parse } from "date-fns";
+import { filter, isNull } from "lodash";
 import React, { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
-import { diffInDays } from "../../Helper/diffInDays";
-import { parseDate } from "../../Helper/parseDate";
 import { toCalendar } from "../../Helper/toCalendar";
 import { Layout } from "../../Shared/Layout";
 import { RoomsDataTable } from "../../Shared/RoomsDataTable";
@@ -40,17 +38,12 @@ interface Props {
 const getDefaultValues = (): Partial<FormData> => {
     const urlParams = new URLSearchParams(window.location.search);
 
-    const checkIn = toCalendar(
-        parseDate(urlParams.get("check-in")) || new Date()
-    );
-
-    const checkOut = parseDate(urlParams.get("check-out"))
-        ? toCalendar(parseDate(urlParams.get("check-out"))!)
-        : undefined;
+    const checkIn = urlParams.get("checkIn") || toCalendar(new Date());
+    const checkOut = urlParams.get("checkOut") || undefined;
 
     const defaultValues = {
-        checkIn,
-        checkOut,
+        checkIn: checkIn,
+        checkOut: checkOut,
         persons: Number.parseInt(urlParams.get("persons") || "1"),
     };
 
@@ -61,7 +54,6 @@ const Search = ({ rooms }: Props) => {
     const {
         handleSubmit,
         register,
-        setError,
         watch,
         formState: { errors, isSubmitting },
     } = useForm<FormData>({ defaultValues: getDefaultValues() });
@@ -72,29 +64,28 @@ const Search = ({ rooms }: Props) => {
         "persons",
     ]);
 
-    const nights = useRef(diffInDays(checkIn, checkOut) || 1).current;
+    const nightsRef = useRef<null | number>(null);
+
+    // Check if is null because it should only be updated once
+    if (isNull(nightsRef.current) && checkIn && checkOut) {
+        const dateLeft = parse(checkIn, "y-MM-dd", new Date());
+        const dateRight = parse(checkOut, "y-MM-dd", new Date());
+
+        if (isValid(dateLeft) && isValid(dateRight)) {
+            nightsRef.current = differenceInDays(dateLeft, dateRight);
+            nightsRef.current = Math.abs(nightsRef.current);
+        }
+    }
+
+    const nights = nightsRef.current || 1;
 
     const onSubmit = handleSubmit(({ checkIn, checkOut, persons }) => {
-        if (!parseDate(checkIn)) {
-            return setError("checkIn", {
-                type: "required",
-                message: "Invalid Date",
-            });
-        }
-
-        if (!parseDate(checkOut)) {
-            return setError("checkOut", {
-                type: "required",
-                message: "Invalid Date",
-            });
-        }
-
         Inertia.visit(window.location.href.split("?")[0], {
             replace: true,
             only: ["rooms"],
             data: {
-                "check-in": checkIn,
-                "check-out": checkOut,
+                checkIn,
+                checkOut,
                 persons,
             },
         });
@@ -102,11 +93,11 @@ const Search = ({ rooms }: Props) => {
 
     const onClick = useCallback(
         (room: Room) => {
-            if (parseDate(checkIn) && parseDate(checkOut)) {
+            if (checkIn && checkOut) {
                 Inertia.visit("/new", {
                     data: {
-                        "check-in": toCalendar(parseDate(checkIn)!),
-                        "check-out": toCalendar(parseDate(checkOut)!),
+                        checkIn,
+                        checkOut,
                         roomId: room.id,
                         persons,
                     },
@@ -139,40 +130,28 @@ const Search = ({ rooms }: Props) => {
                 >
                     <GridItem>
                         <FormControl isInvalid={!!errors.checkIn}>
-                            <FormLabel htmlFor="check-in">Check-in</FormLabel>
+                            <FormLabel htmlFor="checkIn">Check-in</FormLabel>
                             <Input
-                                id="check-in"
+                                id="checkIn"
                                 type="date"
                                 size={"lg"}
                                 min={toCalendar(new Date())}
                                 max={toCalendar(MAX_BOOKING_DATE)}
-                                {...register("checkIn", {
-                                    required: true,
-                                    valueAsDate: true,
-                                })}
+                                {...register("checkIn", { required: true })}
                             />
                         </FormControl>
                     </GridItem>
 
                     <GridItem>
                         <FormControl isInvalid={!!errors.checkOut}>
-                            <FormLabel htmlFor="check-out">Check-out</FormLabel>
+                            <FormLabel htmlFor="checkOut">Check-out</FormLabel>
                             <Input
-                                id="check-out"
+                                id="checkOut"
                                 type="date"
                                 size={"lg"}
-                                min={
-                                    parseDate(checkIn)
-                                        ? toCalendar(
-                                              addDays(parseDate(checkIn)!, 1)
-                                          )
-                                        : toCalendar(new Date())
-                                }
+                                min={checkIn || toCalendar(new Date())}
                                 max={toCalendar(MAX_BOOKING_DATE)}
-                                {...register("checkOut", {
-                                    required: true,
-                                    valueAsDate: true,
-                                })}
+                                {...register("checkOut", { required: true })}
                             />
                         </FormControl>
                     </GridItem>

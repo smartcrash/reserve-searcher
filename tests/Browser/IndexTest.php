@@ -38,8 +38,8 @@ class IndexTest extends DuskTestCase
             foreach ($bookings as $booking) {
                 $browser->with("[data-testid='booking-$booking->id']", function ($item) use ($booking) {
                     $item
-                        ->assertSee(Carbon::create($booking->checkIn)->format('d/m/Y'))
-                        ->assertSee(Carbon::create($booking->checkOut)->format('d/m/Y'))
+                        ->assertSee(Carbon::parse($booking->checkIn)->format('d/m/Y'))
+                        ->assertSee(Carbon::parse($booking->checkOut)->format('d/m/Y'))
                         ->assertSee(ucfirst(getRoomType($booking->room->capacity)))
                         ->assertSee($booking->persons)
                         ->assertSee($booking->guest->fullName)
