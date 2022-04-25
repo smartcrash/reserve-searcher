@@ -17,7 +17,7 @@ import {
 import { Inertia } from "@inertiajs/inertia";
 import { addDays } from "date-fns";
 import { filter } from "lodash";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
 import { diffInDays } from "../../Helper/diffInDays";
