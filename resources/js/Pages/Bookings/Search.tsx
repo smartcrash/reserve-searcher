@@ -29,7 +29,6 @@ interface FormData {
     checkIn: string;
     checkOut: string;
     persons: number;
-    nights: number;
 }
 
 interface Props {
@@ -72,7 +71,6 @@ const getDefaultValues = (): Partial<FormData> => {
         checkIn,
         checkOut,
         persons: Number.parseInt(urlParams.get("persons") || "1"),
-        nights: checkIn && checkOut ? diffInDays(checkIn, checkOut) || 0 : 0,
     };
 
     return defaultValues;
@@ -82,31 +80,16 @@ const Search = ({ rooms }: Props) => {
     const {
         handleSubmit,
         register,
-        setValue,
         setError,
         watch,
         formState: { errors, isSubmitting },
     } = useForm<FormData>({ defaultValues: getDefaultValues() });
 
-    const [checkIn, checkOut, persons, nights] = watch([
+    const [checkIn, checkOut, persons] = watch([
         "checkIn",
         "checkOut",
         "persons",
-        "nights",
     ]);
-
-    useEffect(() => {
-        if (nights && parseDate(checkIn)) {
-            const dateRight = addDays(parseDate(checkIn)!, nights);
-            setValue("checkOut", toCalendar(dateRight));
-        }
-    }, [nights]);
-
-    useEffect(() => {
-        const newValue = diffInDays(checkIn, checkOut);
-
-        if (!isNull(newValue)) setValue("nights", newValue);
-    }, [checkIn, checkOut]);
 
     const onSubmit = handleSubmit(({ checkIn, checkOut, persons }) => {
         if (!parseDate(checkIn)) {
@@ -150,6 +133,8 @@ const Search = ({ rooms }: Props) => {
         [checkIn, checkOut, persons]
     );
 
+    const nights = diffInDays(checkIn, checkOut) || 1;
+
     return (
         <Layout>
             <Box
@@ -167,7 +152,7 @@ const Search = ({ rooms }: Props) => {
                     mb={6}
                     templateColumns={{
                         sm: "1fr",
-                        md: "1fr 1fr 150px",
+                        md: "repeat(2, 1fr)",
                     }}
                     gap={6}
                 >
@@ -206,23 +191,6 @@ const Search = ({ rooms }: Props) => {
                                 {...register("checkOut", {
                                     required: true,
                                     valueAsDate: true,
-                                })}
-                            />
-                        </FormControl>
-                    </GridItem>
-
-                    <GridItem>
-                        <FormControl isInvalid={!!errors.nights}>
-                            <FormLabel htmlFor="persons">Nights</FormLabel>
-                            <Input
-                                id={"nights"}
-                                type={"number"}
-                                step={1}
-                                min={1}
-                                size={"lg"}
-                                {...register("nights", {
-                                    required: true,
-                                    valueAsNumber: true,
                                 })}
                             />
                         </FormControl>
@@ -303,7 +271,7 @@ const Search = ({ rooms }: Props) => {
 
                         <RoomsDataTable
                             rooms={rooms}
-                            nights={nights || 1}
+                            nights={nights}
                             onClick={onClick}
                         />
                     </>
