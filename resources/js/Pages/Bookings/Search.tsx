@@ -17,7 +17,7 @@ import {
 import { Inertia } from "@inertiajs/inertia";
 import { addDays } from "date-fns";
 import { filter } from "lodash";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
 import { diffInDays } from "../../Helper/diffInDays";
@@ -72,6 +72,8 @@ const Search = ({ rooms }: Props) => {
         "persons",
     ]);
 
+    const nights = useRef(diffInDays(checkIn, checkOut) || 1).current;
+
     const onSubmit = handleSubmit(({ checkIn, checkOut, persons }) => {
         if (!parseDate(checkIn)) {
             return setError("checkIn", {
@@ -113,8 +115,6 @@ const Search = ({ rooms }: Props) => {
         },
         [checkIn, checkOut, persons]
     );
-
-    const nights = diffInDays(checkIn, checkOut) || 1;
 
     return (
         <Layout>
