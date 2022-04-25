@@ -53,26 +53,32 @@ class Room extends Model
      */
     public function checkAvailability(Carbon $checkIn, Carbon $checkOut): bool
     {
-        $leftDate = $checkIn->format('Y-m-d');
-        $rightDate = $checkOut->format('Y-m-d');
+        $leftDate = $checkIn->copy()->subDay(1)->format('Y-m-d');
+        $rightDate = $checkOut->copy()->addDay(1)->format('Y-m-d');
 
-        $hasBookings = (bool) $this
+        $bookings = $this
             ->bookings()
             ->where(function ($query) use ($leftDate, $rightDate) {
-                $query->where(function ($query) use ($leftDate, $rightDate) {
-                    $query->whereBetween('checkIn', [$leftDate, $rightDate]);
-                })
+                $query
+                    ->orWhere(function ($query) use ($leftDate, $rightDate) {
+                        $query->whereBetween('checkIn', [$leftDate, $rightDate]);
+                        // $query
+                        //     ->whereDate('checkIn', '>', $leftDate)
+                        //     ->whereDate('checkIn', '<', $rightDate);
+                    })
                     ->orWhere(function ($query) use ($leftDate, $rightDate) {
                         $query->whereBetween('checkOut', [$leftDate, $rightDate]);
+                        // $query
+                        //     ->whereDate('checkOut', '>', $leftDate)
+                        //     ->whereDate('checkOut', '<', $rightDate);
                     })
                     ->orWhere(function ($query) use ($leftDate, $rightDate) {
                         $query
-                            ->whereDate('checkIn', '<=', $leftDate)
-                            ->whereDate('checkOut', '>=', $rightDate);
+                            ->whereDate('checkIn', '<', $leftDate)
+                            ->whereDate('checkOut', '>', $rightDate);
                     });
-            })
-            ->count();
+            })->get();
 
-        return !$hasBookings;
+        return !$bookings->count();
     }
 }
