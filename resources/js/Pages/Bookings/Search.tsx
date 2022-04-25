@@ -15,12 +15,14 @@ import {
     StatNumber,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
-import { addDays, differenceInDays, isValid } from "date-fns";
-import { filter, isNull } from "lodash";
-import React, { useCallback, useEffect } from "react";
+import { addDays } from "date-fns";
+import { filter } from "lodash";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { MAX_BOOKING_DATE } from "../../constants";
-import { formatDate } from "../../Helper/formatDate";
+import { diffInDays } from "../../Helper/diffInDays";
+import { parseDate } from "../../Helper/parseDate";
+import { toCalendar } from "../../Helper/toCalendar";
 import { Layout } from "../../Shared/Layout";
 import { RoomsDataTable } from "../../Shared/RoomsDataTable";
 import { Room } from "../../types";
@@ -34,27 +36,6 @@ interface FormData {
 interface Props {
     rooms?: Room[];
 }
-
-const toCalendar = (date: Date) => formatDate(date, "y-MM-dd");
-
-const parseDate = (value: string | null) => {
-    if (!value) return undefined;
-
-    const date = new Date(value);
-
-    if (!isValid(date)) return undefined;
-
-    return addDays(date, 1);
-};
-
-const diffInDays = (dateLeft: string, dateRight: string) => {
-    const a = parseDate(dateLeft);
-    const b = parseDate(dateRight);
-
-    if (a && b) return Math.abs(differenceInDays(a, b));
-
-    return null;
-};
 
 const getDefaultValues = (): Partial<FormData> => {
     const urlParams = new URLSearchParams(window.location.search);
