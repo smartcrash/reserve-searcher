@@ -36,7 +36,7 @@ interface Props {
     room: Room;
 }
 
-const Create = ({ room, ...props }: Props) => {
+const Create = ({ room }: Props) => {
     const urlParams = new URLSearchParams(window.location.search);
 
     const checkIn = parse(urlParams.get("checkIn")!, "y-MM-dd", new Date());

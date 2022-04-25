@@ -4,6 +4,7 @@ namespace Tests\Browser;
 
 use App\Models\Booking;
 use App\Models\Room;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Dusk\Browser;
@@ -18,17 +19,23 @@ class CreateTest extends DuskTestCase
     {
         parent::setUp();
         $this->artisan('db:seed');
+        Booking::truncate();
     }
 
     public function test_can_create_booking()
     {
         $this->browse(function (Browser $browser) {
             $room = Room::all()->random();
-            $checkIn = now()->toDateString();
-            $checkOut = now()->addDay(1)->toDateString();
+            $checkIn = now();
+            $checkOut = now()->addDay(1);
             $persons = 1;
 
-            $url = '/new?check-in=' . urlencode($checkIn) . '&check-out=' . urlencode($checkOut) . '&persons=' . $persons . '&roomId=' . $room->id;
+            $url = route('create', [
+                'checkIn' => $checkIn->format('Y-m-d'),
+                'checkOut' => $checkOut->format('Y-m-d'),
+                'persons' => $persons,
+                'roomId' => $room->id,
+            ], false);
 
             $fullName = $this->faker->name();
             $email = $this->faker->email();
@@ -44,11 +51,15 @@ class CreateTest extends DuskTestCase
 
             $booking = Booking::orderBy('createdAt', 'desc')->get()->first();
 
-            $browser
-                ->assertSee($booking->identifier)
-                ->assertSee($fullName)
-                ->assertSee($email)
-                ->assertSee($phoneNumber);
+            $browser->with("[data-testid='booking-$booking->id']", function ($item) use ($booking, $fullName, $email, $phoneNumber) {
+                $item
+                    ->assertSee($booking->checkIn->format('d/m/Y'))
+                    ->assertSee($booking->checkOut->format('d/m/Y'))
+                    ->assertSee($booking->identifier)
+                    ->assertSee($fullName)
+                    ->assertSee($email)
+                    ->assertSee($phoneNumber);
+            });
         });
     }
 }

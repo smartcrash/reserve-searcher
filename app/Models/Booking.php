@@ -38,8 +38,8 @@ class Booking extends Model
         'persons' => 'int',
         'guestId' => 'int',
         'roomId' => 'int',
-        'checkIn' => 'datetime',
-        'checkOut' => 'datetime',
+        'checkIn' => 'date',
+        'checkOut' => 'date',
         'createdAt' => 'datetime',
     ];
 

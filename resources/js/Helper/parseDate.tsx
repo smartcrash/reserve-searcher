@@ -1,17 +1,14 @@
-import { isValid, addDays } from "date-fns";
+import { parse } from "date-fns/esm";
 
 /**
  * Attempt to convert a string to a valid Date object.
  *
- * @param {string | null} value
- * @returns {Date | undefined}
+ * @param {string} value
+ * @returns {Date}
  */
-export const parseDate = (value: string | null) => {
-    if (!value) return undefined;
+export const parseDate = (dateString: string) => {
+    // Remove tz part
+    if (dateString.includes("T")) dateString = dateString.split("T")[0];
 
-    const date = new Date(value);
-
-    if (!isValid(date)) return undefined;
-
-    return addDays(date, 1);
+    return parse(dateString, "y-MM-dd", new Date());
 };
