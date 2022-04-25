@@ -51,30 +51,32 @@ class SearchTest extends DuskTestCase
         });
     }
 
-    public function test_can_only_see_available_rooms()
+    public function test_can_only_see_available_rooms_1()
     {
         $this->browse(function (Browser $browser) {
             Booking::query()->delete();
             Room::query()->delete();
 
-            Room::create(['capacity' => 1, 'dailyPrice' => 20, 'number' => 1]);
-            Booking::factory()->count(1)->create();
-            Room::create(['capacity' => 1, 'dailyPrice' => 20, 'number' => 2]);
+            $room_1 = Room::create(['capacity' => 1, 'dailyPrice' => 20, 'number' => 1]);
+            $room_2 = Room::create(['capacity' => 1, 'dailyPrice' => 20, 'number' => 2]);
 
-            $booking = Booking::all()->first();
-            $bookedRoom = $booking->room;
-            $availableRoom = Room::orderBy('id', 'desc')->get()->first();
+            $booking = Booking::factory()->make();
+            $booking->checkIn  = now();
+            $booking->checkOut  = now()->addDay(1);
+            $booking->room()->associate($room_1);
+            $booking->save();
 
-            $checkIn = now()->toDateString();
-            $checkOut = now()->addDay(1)->toDateString();
+            $dateLeft = now()->toDateString();
+            $dateRight = now()->addDay(1)->toDateString();
             $persons = 1;
 
             $browser
-                ->visit('/search?check-in=' . urlencode($checkIn) . '&check-out=' . urlencode($checkOut) . '&persons=' . $persons)
-                ->assertDontSee(str_pad($bookedRoom->number, 2, '0', STR_PAD_LEFT))
-                ->assertSee(str_pad($availableRoom->number, 2, '0', STR_PAD_LEFT));
+                ->visit('/search?check-in=' . urlencode($dateLeft) . '&check-out=' . urlencode($dateRight) . '&persons=' . $persons)
+                ->assertDontSeeIn('[data-testid="table"]', str_pad($room_1->number, 2, '0', STR_PAD_LEFT))
+                ->assertSeeIn('[data-testid="table"]', str_pad($room_2->number, 2, '0', STR_PAD_LEFT));
         });
     }
+
 
     public function test_can_navigate_create_booking_by_clicking_room()
     {
