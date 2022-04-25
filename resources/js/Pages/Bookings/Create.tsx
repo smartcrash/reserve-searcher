@@ -2,14 +2,14 @@ import {
     Box,
     Button,
     Flex,
-    Text,
     FormControl,
+    FormErrorMessage,
     FormLabel,
     Grid,
     GridItem,
     Heading,
     Input,
-    HStack,
+    Text,
 } from "@chakra-ui/react";
 import { Inertia } from "@inertiajs/inertia";
 import { addDays, differenceInDays } from "date-fns";
@@ -59,7 +59,7 @@ const Create = ({ room, ...props }: Props) => {
             roomId,
         };
 
-        Inertia.post("/new", data);
+        Inertia.post("/new", data, {});
     });
 
     const nights = differenceInDays(new Date(checkOut), new Date(checkIn));
@@ -95,6 +95,9 @@ const Create = ({ room, ...props }: Props) => {
                                 placeholder={"Jhon Doe"}
                                 {...register("fullName", { required: true })}
                             />
+                            <FormErrorMessage>
+                                {errors.fullName?.message}
+                            </FormErrorMessage>
                         </FormControl>
 
                         <Grid
@@ -116,6 +119,9 @@ const Create = ({ room, ...props }: Props) => {
                                             required: true,
                                         })}
                                     />
+                                    <FormErrorMessage>
+                                        {errors.email?.message}
+                                    </FormErrorMessage>
                                 </FormControl>
                             </GridItem>
 
@@ -133,6 +139,9 @@ const Create = ({ room, ...props }: Props) => {
                                             required: true,
                                         })}
                                     />
+                                    <FormErrorMessage>
+                                        {errors.phoneNumber?.message}
+                                    </FormErrorMessage>
                                 </FormControl>
                             </GridItem>
                         </Grid>

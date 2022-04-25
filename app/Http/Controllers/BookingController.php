@@ -37,7 +37,7 @@ class BookingController extends Controller
         $validator = Validator::make($request->query(), [
             'check-in' => 'required|date|after:yesterday',
             'check-out' => 'required|date|before_or_equal:2022-12-31',
-            'persons' => 'required|integer|min:1|max:4'
+            'persons' => 'required|integer|min:1'
         ]);
 
 
@@ -80,7 +80,7 @@ class BookingController extends Controller
             'check-in' => 'required|date|after:yesterday',
             'check-out' => 'required|date|before_or_equal:2022-12-31',
             'roomId' => 'required|exists:rooms,id',
-            'persons' => 'required|integer|min:1|max:4'
+            'persons' => 'required|integer|min:1'
         ]);
 
 
@@ -95,7 +95,8 @@ class BookingController extends Controller
         $room = Room::findOrFail($validated['roomId']);
         $persons = (int) $validated['persons'];
 
-        if (!$room->checkAvailability($checkIn, $checkOut)) {
+        if (!$room->checkAvailability($checkIn, $checkOut) || $persons > $room->capacity) {
+            $request->session()->flash('error', 'Invalid room selection');
             return redirect('/search');
         }
 
@@ -116,11 +117,11 @@ class BookingController extends Controller
         $validated = $request->validate([
             'checkIn' => 'required|date|after:yesterday',
             'checkOut' => 'required|date|before_or_equal:2022-12-31',
-            'fullName' => 'required|min:4',
+            'fullName' => 'required',
             'email' => 'required|email',
             'phoneNumber' => 'required',
             'roomId' => 'required|exists:rooms,id',
-            'persons' => 'required|integer|min:1|max:4'
+            'persons' => 'required|integer|min:1'
         ]);
 
         $booking = Booking::make($validated);
@@ -130,7 +131,8 @@ class BookingController extends Controller
         $checkIn = Carbon::create($validated['checkIn']);
         $checkOut = Carbon::create($validated['checkOut']);
 
-        if (!$room->checkAvailability($checkIn, $checkOut)) {
+        if (!$room->checkAvailability($checkIn, $checkOut) || $booking->persons > $room->capacity) {
+            $request->session()->flash('error', 'Invalid room selection');
             return redirect('/search');
         }
 
@@ -142,6 +144,7 @@ class BookingController extends Controller
 
         $booking->save();
 
+        $request->session()->flash('message', 'Created a new Booking');
         return redirect('/');
     }
 }
