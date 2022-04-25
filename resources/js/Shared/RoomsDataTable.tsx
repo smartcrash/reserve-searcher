@@ -48,7 +48,7 @@ export const RoomsDataTable = ({
         () =>
             rooms.map(({ id, number, capacity, dailyPrice }) => ({
                 id,
-                number: padStart(number, 2, "0"),
+                number: `#${padStart(number, 2, "0")}`,
                 roomType: capitalize(getRoomType(capacity)),
                 dailyPrice: `${toCurrency(dailyPrice)}/night`,
                 totalPrice: toCurrency(dailyPrice * nights),
