@@ -14,7 +14,7 @@ export const GoBack = () => {
             onClick={goBack}
             aria-label="Go back"
             size={"lg"}
-            icon={<ChevronLeftIcon fontSize={"4xl"} />}
+            icon={<ChevronLeftIcon fontSize={{ base: "2xl", md: "4xl" }} />}
         />
     );
 };
