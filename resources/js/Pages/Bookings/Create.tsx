@@ -155,7 +155,7 @@ const Create = ({ room }: Props) => {
                             </GridItem>
                         </Grid>
 
-                        <FormControl isInvalid={!!errors.comment} mb={6}>
+                        <FormControl isInvalid={!!errors.comment} mb={6} mt={6}>
                             <FormLabel htmlFor="comment">Comment</FormLabel>
                             <Textarea
                                 id="comment"
