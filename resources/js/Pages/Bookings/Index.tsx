@@ -1,7 +1,18 @@
-import { SmallAddIcon } from "@chakra-ui/icons";
-import { Button, Flex, Grid, GridItem } from "@chakra-ui/react";
+import { Search2Icon, SmallAddIcon } from "@chakra-ui/icons";
+import {
+    Button,
+    Heading,
+    Flex,
+    FormControl,
+    Grid,
+    GridItem,
+    Input,
+    InputGroup,
+    InputLeftElement,
+} from "@chakra-ui/react";
 import { Link } from "@inertiajs/inertia-react";
-import React from "react";
+import React, { useRef, ChangeEventHandler } from "react";
+import useFuzzy from "../../Hooks/useFuzzy";
 import { BookingCard } from "../../Shared/BookingCard";
 import { Layout } from "../../Shared/Layout";
 import { Booking } from "../../types";
@@ -11,6 +22,20 @@ interface Props {
 }
 
 const Index = ({ bookings }: Props) => {
+    const inputValue = useRef("");
+    const { result, search } = useFuzzy(bookings, [
+        "identifier",
+        "guest.fullName",
+    ]);
+
+    const data = inputValue.current ? result : bookings;
+
+    const onInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+        const value = event.target.value.trim();
+        inputValue.current = value;
+        search(value);
+    };
+
     return (
         <Layout>
             <Flex justifyContent={"center"} mb={12}>
@@ -26,22 +51,53 @@ const Index = ({ bookings }: Props) => {
                 </Button>
             </Flex>
 
-            <Grid
-                templateColumns={{
-                    base: "1fr",
-                    md: "repeat(2, 1fr)",
-                    lg: "repeat(3, 1fr)",
-                }}
-                gap={6}
-            >
-                {bookings.map((item) => {
-                    return (
-                        <GridItem key={item.id}>
-                            <BookingCard booking={item} />
-                        </GridItem>
-                    );
-                })}
-            </Grid>
+            <FormControl mb={10} maxW={"50%"} marginX={"auto"}>
+                <InputGroup size={"lg"}>
+                    <InputLeftElement
+                        pointerEvents={"none"}
+                        children={<Search2Icon />}
+                        color={"gray.500"}
+                    />
+                    <Input
+                        type="search"
+                        onChange={onInputChange}
+                        placeholder={"Search by indentifier or guest name"}
+                        borderRadius={"full"}
+                        borderColor={"gray.300"}
+                        _placeholder={{ color: "gray.500" }}
+                    />
+                </InputGroup>
+            </FormControl>
+
+            {!!data.length && (
+                <Grid
+                    templateColumns={{
+                        base: "1fr",
+                        md: "repeat(2, 1fr)",
+                        lg: "repeat(3, 1fr)",
+                    }}
+                    gap={6}
+                >
+                    {data.map((item) => {
+                        return (
+                            <GridItem key={item.id}>
+                                <BookingCard booking={item} />
+                            </GridItem>
+                        );
+                    })}
+                </Grid>
+            )}
+
+            {!data.length &&
+                (inputValue.current ? (
+                    <Heading textAlign={"center"} color={"gray.500"} my={"20"}>
+                        No search matches
+                    </Heading>
+                ) : (
+                    <Heading textAlign={"center"} color={"gray.500"} my={"20"}>
+                        No bookings so far
+                    </Heading>
+                ))}
         </Layout>
     );
 };
