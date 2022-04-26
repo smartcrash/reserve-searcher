@@ -26,6 +26,7 @@ class Booking extends Model
         'checkIn',
         'checkOut',
         'persons',
+        'comment',
     ];
 
     /**

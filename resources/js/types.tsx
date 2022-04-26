@@ -19,6 +19,7 @@ export interface Booking {
     checkOut: string;
     totalPrice: number;
     persons: number;
+    comment: string;
     roomId: number;
     room: Room;
     guestId: number;

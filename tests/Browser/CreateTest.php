@@ -29,6 +29,7 @@ class CreateTest extends DuskTestCase
             $checkIn = now();
             $checkOut = now()->addDay(1);
             $persons = 1;
+            $comment = $this->faker->text();
 
             $url = route('create', [
                 'checkIn' => $checkIn->format('Y-m-d'),
@@ -45,6 +46,7 @@ class CreateTest extends DuskTestCase
                 ->type('fullName', $fullName)
                 ->type('email', $email)
                 ->type('phoneNumber', $phoneNumber)
+                ->type('comment', $comment)
                 ->press('Create Booking')
                 ->pause(500)
                 ->assertPathIs('/');
@@ -56,6 +58,7 @@ class CreateTest extends DuskTestCase
                     ->assertSee($booking->checkIn->format('d/m/Y'))
                     ->assertSee($booking->checkOut->format('d/m/Y'))
                     ->assertSee($booking->identifier)
+                    ->assertSee($booking->comment)
                     ->assertSee($fullName)
                     ->assertSee($email)
                     ->assertSee($phoneNumber);
