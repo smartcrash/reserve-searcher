@@ -61,7 +61,7 @@ const Index = ({ bookings }: Props) => {
                     <Input
                         type="search"
                         onChange={onInputChange}
-                        placeholder={"Search by indentifier or guest name"}
+                        placeholder={"Search by identifier or guest name"}
                         borderRadius={"full"}
                         borderColor={"gray.300"}
                         _placeholder={{ color: "gray.500" }}
