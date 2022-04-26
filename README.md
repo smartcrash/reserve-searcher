@@ -6,6 +6,8 @@ Live [demo](https://reserve-searcher.herokuapp.com/) 🚀
 
 ## Packages
 
+Some of the important packages used on this project:
+
 | Package                                          | Version |
 | ------------------------------------------------ | ------- |
 | [Laravel](https://laravel.com/)                  | 8.x     |
