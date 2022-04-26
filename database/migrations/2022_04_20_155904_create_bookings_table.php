@@ -16,6 +16,7 @@ class CreateBookingsTable extends Migration
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
             $table->string('identifier');
+            $table->text('comment')->default('');
             $table->date('checkIn');
             $table->date('checkOut');
             $table->double('totalPrice', 8, 2, true);

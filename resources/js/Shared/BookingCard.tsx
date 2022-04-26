@@ -34,6 +34,7 @@ export const BookingCard = ({ booking }: Props) => {
         totalPrice,
         checkIn,
         checkOut,
+        comment,
     } = booking;
 
     const attributes = {
@@ -43,6 +44,7 @@ export const BookingCard = ({ booking }: Props) => {
         Price: toCurrency(totalPrice),
         Persons: persons,
         "Room Type": capitalize(getRoomType(room.capacity)),
+        Comment: comment,
     };
 
     const onDelete = () => {

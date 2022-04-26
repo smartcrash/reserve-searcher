@@ -123,6 +123,7 @@ class BookingController extends Controller
             'fullName' => 'required',
             'email' => 'required|email',
             'phoneNumber' => 'required',
+            'comment' => 'nullable|string',
             'roomId' => 'required|exists:rooms,id',
             'persons' => 'required|integer|min:1'
         ]);
@@ -141,6 +142,7 @@ class BookingController extends Controller
 
         $booking->identifier = Str::random(10);
         $booking->totalPrice = $room->dailyPrice * $checkIn->diff($checkOut)->days;
+        $booking->comment = $booking->comment ?: "";
         $booking->checkIn = $checkIn;
         $booking->checkOut = $checkOut;
         $booking->guest()->associate($guest);

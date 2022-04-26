@@ -7,6 +7,7 @@ import {
     FormLabel,
     Grid,
     GridItem,
+    Textarea,
     Heading,
     Input,
     Text,
@@ -27,6 +28,7 @@ type FormData = {
     fullName: string;
     email: string;
     phoneNumber: string;
+    comment: string;
 };
 
 interface Props {
@@ -49,21 +51,24 @@ const Create = ({ room }: Props) => {
         formState: { errors, isSubmitting },
     } = useForm<FormData>();
 
-    const onSubmit = handleSubmit(({ fullName, email, phoneNumber }) => {
-        const roomId = room.id;
+    const onSubmit = handleSubmit(
+        ({ fullName, email, phoneNumber, comment }) => {
+            const roomId = room.id;
 
-        const data = {
-            checkIn: toCalendar(checkIn),
-            checkOut: toCalendar(checkOut),
-            persons,
-            fullName,
-            email,
-            phoneNumber,
-            roomId,
-        };
+            const data = {
+                checkIn: toCalendar(checkIn),
+                checkOut: toCalendar(checkOut),
+                persons,
+                fullName,
+                email,
+                phoneNumber,
+                roomId,
+                comment,
+            };
 
-        Inertia.post("/new", data, {});
-    });
+            Inertia.post("/new", data, {});
+        }
+    );
 
     const nights = differenceInDays(new Date(checkOut), new Date(checkIn));
 
@@ -149,6 +154,19 @@ const Create = ({ room }: Props) => {
                                 </FormControl>
                             </GridItem>
                         </Grid>
+
+                        <FormControl isInvalid={!!errors.comment} mb={6}>
+                            <FormLabel htmlFor="comment">Comment</FormLabel>
+                            <Textarea
+                                id="comment"
+                                size={"lg"}
+                                placeholder={"(Optional)"}
+                                {...register("comment", {})}
+                            />
+                            <FormErrorMessage>
+                                {errors.comment?.message}
+                            </FormErrorMessage>
+                        </FormControl>
 
                         <Flex justifyContent={"flex-end"}>
                             <Button
