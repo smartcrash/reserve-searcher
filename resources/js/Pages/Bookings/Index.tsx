@@ -1,6 +1,7 @@
 import { Search2Icon, SmallAddIcon } from "@chakra-ui/icons";
 import {
     Button,
+    Heading,
     Flex,
     FormControl,
     Grid,
@@ -68,22 +69,35 @@ const Index = ({ bookings }: Props) => {
                 </InputGroup>
             </FormControl>
 
-            <Grid
-                templateColumns={{
-                    base: "1fr",
-                    md: "repeat(2, 1fr)",
-                    lg: "repeat(3, 1fr)",
-                }}
-                gap={6}
-            >
-                {data.map((item) => {
-                    return (
-                        <GridItem key={item.id}>
-                            <BookingCard booking={item} />
-                        </GridItem>
-                    );
-                })}
-            </Grid>
+            {!!data.length && (
+                <Grid
+                    templateColumns={{
+                        base: "1fr",
+                        md: "repeat(2, 1fr)",
+                        lg: "repeat(3, 1fr)",
+                    }}
+                    gap={6}
+                >
+                    {data.map((item) => {
+                        return (
+                            <GridItem key={item.id}>
+                                <BookingCard booking={item} />
+                            </GridItem>
+                        );
+                    })}
+                </Grid>
+            )}
+
+            {!data.length &&
+                (inputValue.current ? (
+                    <Heading textAlign={"center"} color={"gray.500"} my={"20"}>
+                        No search matches
+                    </Heading>
+                ) : (
+                    <Heading textAlign={"center"} color={"gray.500"} my={"20"}>
+                        No bookings so far
+                    </Heading>
+                ))}
         </Layout>
     );
 };
